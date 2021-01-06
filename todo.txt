@@ -1,0 +1,5 @@
+1) Rename variables, functions and classes to match the Python convention;
+2) Translate to english;
+3) Rewrite Vincenty distance as functions instead of class;
+4) Build a GUI;
+5) Write README.
