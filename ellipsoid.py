@@ -1,18 +1,29 @@
 from math import sin, sqrt, radians
 
 
-class Elipsoide(object):
+class Ellipsoid(object):
     """
-    Esta classe cria um objeto da classe elipsoide
+    A class used to represent an ellipsoid.
+    For initialization, it requires:
+    a -> major semi-axis
+    f -> flattening
     """
 
     def __init__(self, a, f):
         """
-        O método construtor recebe os valores do semieixo maior (a) e do achatamento (f) do elipsoide,
-        e a partir deles calcula os valores do semieixo menor (b), da primeira excentricidade (e1) e
-        da segunda excentricidade (e2). Além disso, um dos atributos do sistema de referência a ser informado
-        é o seu nome, que será usado unicamente para facilitar a conversão de coordenadas entre diferentes
-        sistemas de referência.
+        Parameters
+        ----------
+        a : float
+            Major semi-axis
+        f : float
+            Flattening
+        b : float
+            Minor semi-axis
+        e1 : float
+            First eccentricity
+        e2 : float
+            Second eccentricity
+        ---------
         """
         self.a = a
         self.f = f
@@ -20,27 +31,43 @@ class Elipsoide(object):
         self.e1 = sqrt((self.a**2-self.b**2)/self.a**2)
         self.e2 = sqrt((self.a**2-self.b**2)/self.b**2)
 
-    def grandeNormal(self, phi):
+    def medirianNormal(self, phi):
         """
-        Calcula a grande normal ao elipsoide para um determinado valor de latitude phi (em graus)
-        """
-        gN = self.a/(sqrt(1-(self.e1**2)*sin(radians(phi))**2))
-        return gN
+        Calculates the normal to point P with latitude phi on ellipsoid surface, 
+        from the meridian plane
 
-    def pequenaNormal(self, phi):
+        Parameters
+        ----------
+        phi : float
+            Latitude in degrees
         """
-        Calcula a pequena normal ao elipsoide para um determinado valor de latitude phi (em graus)
+        mN = self.a/(sqrt(1-(self.e1**2)*sin(radians(phi))**2))
+        return mN
+
+    def equatorNormal(self, phi):
         """
-        pN = self.grandeNormal(phi)*(1-self.e1**2)
-        return pN
+        Calculates the normal to point P with latitude phi on ellipsoid surface,
+        from the equator plane
+
+        Parameters
+        ----------
+        phi : float
+            Latitude in degrees
+        """
+        eN = self.medirianNormal(phi)*(1-self.e1**2)
+        return eN
 
 
 def export_ellipsoids():
+    """
+    Returns a dictionary of ellipsoids from the ellipsoids.txt file
+    """
+
     with open("ellipsoid.txt") as file:
         ellipsoid_dict = {}
         for line in file:
             a = float(line.split()[0])
             f_str_inv = line.split()[1].split("/")[1]
             f = 1/float(f_str_inv)
-            ellipsoid_dict[line.split()[-1]] = Elipsoide(a, f)
+            ellipsoid_dict[line.split()[-1]] = Ellipsoid(a, f)
     return ellipsoid_dict
