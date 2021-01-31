@@ -1,4 +1,4 @@
-from math import sin, sqrt, radians
+from numpy import sin, sqrt, radians
 
 
 class Ellipsoid(object):
@@ -33,7 +33,7 @@ class Ellipsoid(object):
 
     def medirianNormal(self, phi):
         """
-        Calculates the normal to point P with latitude phi on ellipsoid surface, 
+        Calculates the normal to point P with latitude phi on ellipsoid surface,
         from the meridian plane
 
         Parameters
