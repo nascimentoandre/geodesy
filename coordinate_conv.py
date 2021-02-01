@@ -3,17 +3,17 @@ import numpy as np
 
 def dms2degrees(coord):
     """
-    dms2degrees(coord)
+    Converts degrees, minutes and seconds to decimal degrees
 
-    Converte uma coordenada em graus, minutos e segundos para graus decimais.
-
-    Parâmetros
+    Parameters
     -----------
-    coord: Lista (ou tupla) com os valores dos graus, minutos e segundos. Exemplo: [42, 55, 1.9845].
+    coord: list or tuple
+        Array containing a coordinate in degrees, minutes and seconds: [degrees, minutes, seconds]
 
-    Retorna
+    Returns
     ---------
-    degrees: Valor da coordenada em graus decimais. 
+    float
+        Coordinate in decimal degrees
     """
     if coord[0] < 0:
         degrees = coord[0] - coord[1]/60 - coord[2]/3600
@@ -24,53 +24,51 @@ def dms2degrees(coord):
 
 def degrees2dms(coord):
     """
-    degrees2dms(coord)
+    Converts decimal degrees to degrees, minutes and seconds
 
-    Converte uma coordenada em graus decimais para graus, minutos e segundos.
-
-    Parâmetros
+    Parameters
     -----------
-    coord: Valor da coordenada em graus decimais.
+    coord: float
+        Coordinate in decimal degrees
 
-    Retorna
+    Returns
     ---------
-    Lista com os valores dos graus, minutos e segundos.
+    list
+        Degrees, minutes and seconds coordinate
     """
     coordstr = str(coord).split('.')[1]
-    resto1 = float('0.'+coordstr)
-    m = resto1 * 60
-    minutos = float(str(m).split('.')[0])
-    resto2 = float('0.'+str(m).split('.')[1])
-    segundos = resto2 * 60
-    return [float(str(coord).split('.')[0]), minutos, segundos]
+    rest1 = float('0.'+coordstr)
+    m = rest1 * 60
+    minutes = float(str(m).split('.')[0])
+    rest2 = float('0.'+str(m).split('.')[1])
+    seconds = rest2 * 60
+    return [float(str(coord).split('.')[0]), minutes, seconds]
 
 
-def geod2cart(lamb, phi, h, elip, dms=False):
+def geod2cart(lamb, phi, h, elip):
     """
-    geod2cart(lamb, phi, h, elip, dms=False)
+    Converts geodesic coordinates to three dimensional Cartesian coordinates
 
-    Converte coordenadas geodésicas em coordenadas cartesianas tridimensionais.
-
-    Parâmetros
+    Parameters
     -----------
-    lamb: Valor da longitude.
-    phi: Valor da latitude.
-    h: Valor da altitude geométrica.
-    elip: Qual o sistema de refência em questão.
-    dms: Atributo relacionado ao formato da latitude e da longitude. O padrão é False, o que significa
-    que as coordenadas estão em graus decimais. Caso elas estejam em graus, minutos e segundos, é 
-    necessário atribuir o valor True.
+    lamb: float
+        Longitude in decimal degrees
+    phi: float
+        Latitude in decimal degrees
+    h: float
+        Geometric altitude in meters
+    elip: object
+        An instance of the class Ellipsoid
 
-    Retorna
+    Returns
     ---------
-    X: Valor da coordenada cartesiana na direção X.
-    Y: Valor da coordenada cartesiana na direção Y.
-    Z: Valor da coordenada cartesiana na direção Z.
+    float
+        X component of the Cartesian coordinate
+    float
+        Y component of the Cartesian coordinate
+    float
+        Z component of the Cartesian coordinate
     """
-    # Caso a coordenada esteja em graus, minutos e segundos, precisaremos convertê-la para graus decimais
-    if dms:
-        lamb = dms2degrees(lamb)
-        phi = dms2degrees(phi)
     X = (elip.grandeNormal(phi) + h) * \
         np.cos(np.radians(phi)) * np.cos(np.radians(lamb))
     Y = (elip.grandeNormal(phi) + h) * \
@@ -81,38 +79,36 @@ def geod2cart(lamb, phi, h, elip, dms=False):
 
 def cart2geod(X, Y, Z, elip, dms=False):
     """
-    cart2geod(X, Y, Z, elip, dms=False)
+    Converts three dimensional Cartesian coordinates to geodesic coordinates
 
-    Converte coordenadas cartesianas tridimensionais em coordenadas geodésicas.
-
-    Parâmetros
+    Parameters
     -----------
-    X: Valor da coordenada cartesiana na direção X.
-    Y: Valor da coordenada cartesiana na direção Y.
-    Z: Valor da coordenada cartesiana na direção Z.
-    elip: Qual o sistema de refência em questão.
-    dms: Atributo relacionado ao formato da saída. O padrão é False, o que significa que as
-    coordenadas irão sair em graus decimais. Caso o usuário deseje a saída em graus, minutos
-    e segundos, é necessário atribuir o valor True.
+    X: float
+        X component of the Cartesian coordinate (in meters)
+    Y: float
+        Y component of the Cartesian coordinate (in meters)
+    Z: float
+        Z component of the Cartesian coordinate (in meters)
+    elip: object
+        An instance of the class Ellipsoid
 
-    Retorna
+    Returns
     ---------
-    lamb: Valor da longitude.
-    phi: Valor da latitude.
-    h: Valor da altitude geométrica.
+    float
+        Longitude
+    float
+        Latitude
+    float
+        Geometric Altitude in meters
     """
     u = np.arctan((Z/(np.sqrt(X**2+Y**2)))*(elip.a/elip.b))
     lamb = np.rad2deg(np.arctan(Y/X))
     phi = np.rad2deg(np.arctan((Z + elip.e2**2*elip.b*np.sin(u)**3)/((np.sqrt(X**2+Y**2)
                                                                       - elip.e1**2*elip.a*np.cos(u)**3))))
     h = (np.sqrt(X**2+Y**2)/np.cos(np.deg2rad(phi))) - elip.grandeNormal(phi)
-    # A verificação abaixo faz a análise de quadrantes e corrige o valor de lambda
+    # Fixing lamb value
     if X < 0 and Y < 0:
         lamb = -(180-lamb)
     elif X < 0 and Y >= 0:
         lamb = 180 + lamb
-    # Caso deseje que a saída esteja em graus, minutos e segundos, basta atribuir o valor True ao atributo dms
-    if dms:
-        lamb = degrees2dms(lamb)
-        phi = degrees2dms(phi)
     return lamb, phi, h
