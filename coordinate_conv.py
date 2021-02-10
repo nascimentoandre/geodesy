@@ -58,7 +58,7 @@ def geod2cart(lamb, phi, h, elip):
     h: float
         Geometric altitude in meters
     elip: object
-        An instance of the class Ellipsoid
+        An instance of the Ellipsoid class
 
     Returns
     ---------
