@@ -1,29 +1,6 @@
 import numpy as np
 from coordinate_conv import dms2degrees
 
-
-def dist_esfera(phi1, lamb1, phi2, lamb2, R, dms=True):
-    """
-    @parâmetros: phi1 - latitude do ponto 1
-                 lamb1 - longitude do ponto 1
-                 phi2 - latitude do ponto 2
-                 lamb2 - longitude do ponto 2
-                 R - raio médio da Terra
-                 dms - graus, minutos e segundos (bool)
-
-    @retorna: Se - distância entre os dois pontos
-    """
-    if dms == True:
-        phi1, lamb1 = dms2degrees(phi1), dms2degrees(lamb1)
-        phi2, lamb2 = dms2degrees(phi2), dms2degrees(lamb2)
-    phi1, lamb1 = np.deg2rad(phi1), np.deg2rad(lamb1)
-    phi2, lamb2 = np.deg2rad(phi2), np.deg2rad(lamb2)
-    S = np.arccos(np.sin(phi1)*np.sin(phi2)+np.cos(phi1)
-                  * np.cos(phi2)*np.cos(lamb2-lamb1))
-    Se = R*S
-    return Se
-
-
 class vincenty(object):
     # As equações de Vincenty estão implementadas em duas funções diferentes
     # Fonte: https://en.wikipedia.org/wiki/Vincenty's_formulae
