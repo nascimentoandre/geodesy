@@ -1,12 +1,13 @@
 from coordinate_conv import geod2cart, cart2geod
 
-############### MOVE THIS TO A NEW FILE ############
+parameters = {}
+with open("conversion_parameters.dat") as infile:
+    for n, line in enumerate(infile):
+        if n != 0:
+            conv, dx, dy, dz = line.split()[0], float(line.split()[1]), float(line.split()[2]), float(line.split()[3])
+            parameters[conv] = {'dx': dx, 'dy': dy, 'dz': dz}
 
-parameters = {'SIRGAS20002SAD69': {'dx': 67.35, 'dy': -3.88, 'dz': 38.22},
-              'SAD692SIRGAS2000': {'dx': -67.35, 'dy': +3.88, 'dz': -38.22},
-              'SICAD2SIRGAS2000': {'dx': -144.35, 'dy': 242.88, 'dz': -33.22},
-              'SIRGAS20002SICAD': {'dx': 144.35, 'dy': -242.88, 'dz': 33.22}}
-###########################################################
+print(parameters)
 
 
 def conv_geod_datum(lamb, phi, h, elip1, elip2, dms=False):
