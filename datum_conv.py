@@ -7,9 +7,6 @@ with open("conversion_parameters.dat") as infile:
             conv, dx, dy, dz = line.split()[0], float(line.split()[1]), float(line.split()[2]), float(line.split()[3])
             parameters[conv] = {'dx': dx, 'dy': dy, 'dz': dz}
 
-print(parameters)
-
-
 def conv_geod_datum(lamb, phi, h, elip1, elip2, dms=False):
     """
     Converts coordinates between different geodetic datums. Conversion parameters defined until now:
