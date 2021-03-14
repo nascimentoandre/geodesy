@@ -25,7 +25,7 @@ def conv_geod_datum(lamb, phi, h, elip1, elip2, dms=False):
         Geometric altitude in degrees
     elip1: object
         Instance of the Ellipsoid class related to the origin coordinates
-    elip: object
+    elip2: object
         Instance of the Ellipsoid class related to the converted coordinates
 
     Returns
