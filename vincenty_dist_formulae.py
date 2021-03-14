@@ -1,17 +1,31 @@
 import numpy as np
 
-def problema_inverso(phi1, lamb1, phi2, lamb2, elip):
+def inverse_problem(phi1, lamb1, phi2, lamb2, elip):
     """
-    @parâmetros: phi1 - latitude do ponto 1
-                 lamb1 - longitude do ponto 1
-                 phi2 - latitude do ponto 2
-                 lamb2 - longitude do ponto 2
-                 elip - elipsoide ao longo do qual a distância será calculada
-                 dms - graus, minutos e segundos (bool)
+    Given the coordinates of two points and an ellipsoid, this function
+    calculates the azimuths alpha1 and alpha2, and the ellipsoidal distance s.
 
-    @retorna: s - distância no elipsoide
-              alpha1 - azimute de 1 para 2
-              alpha2 - azimute de 2 para 1
+    Parameters
+    -----------
+    phi1: float
+        Latitude of point 1 in degrees
+    lamb1: float
+        Longitude of point 1 in degrees
+    phi2: float
+        Latitude of point 2 in degrees
+    lamb2: float
+        Longitude of point 2 in degrees
+    elip: object
+        Instance of the Ellipsoid class
+
+    Returns
+    --------
+    float
+        Ellipsoidal distance in meters
+    float
+        Azimuth from 1 to 2 in degrees
+    float
+        Azimuth from 2 to 1 in degrees
     """
     phi1, phi2 = np.deg2rad(phi1), np.deg2rad(phi2)
 
@@ -51,7 +65,7 @@ def problema_inverso(phi1, lamb1, phi2, lamb2, elip):
     alpha2 = np.rad2deg(np.arctan2(np.cos(U1)*np.sin(lamb), -np.sin(U1)*np.cos(U2)
                                    + np.cos(U1)*np.sin(U2)*np.cos(lamb)))
 
-    # Normalizando os azimutes para 0..360:
+    # Normalizing azimuths to 0..360:
 
     if alpha1 < 0:
         alpha1 = alpha1 + 360
@@ -62,16 +76,31 @@ def problema_inverso(phi1, lamb1, phi2, lamb2, elip):
 
 def problema_direto(phi1, lamb1, alpha1, s, elip):
     """
-    @parâmetros: phi1 - latitude do ponto 1
-                 lamb1 - longitude do ponto1
-                 alpha1 - azimute de 1 para 2
-                 s - distância no elipsoide
-                 elip - elipsoide ao longo do qual a distância será calculada
-                 dms - graus, minutos e segundos (bool)
+    Given the coordinate of a point, azimuth alpha1, ellipsoidal distance
+    and an ellipsoid, returns end point (phi2, lamb2) and azimuth alpha2
 
-    @retorna: phi2 - latitude do ponto 2
-              lamb2 - longitude do ponto 2
-              alpha2 - azimute de 2 para 1
+    Parameters
+    ----------
+    phi1: float
+        Latitude of point 1 in degrees
+    lamb1: float
+        Longitude of point 1 in degrees
+    alpha1: float
+        Azimuth from 1 to 2 in degrees
+    s: float
+        Ellipsoidal distance in meters
+    elip: object
+        Instance of the Ellipsoid class
+
+    Returns
+    --------
+    float
+        Latitude of point 2 in degrees
+    float
+        Longitude of point 2 in degrees
+    float
+        Azimuth from 2 to 1 in degrees
+
     """
     phi1, lamb1, alpha1 = np.deg2rad(
         phi1), np.deg2rad(lamb1), np.deg2rad(alpha1)
@@ -109,7 +138,7 @@ def problema_direto(phi1, lamb1, alpha1, s, elip):
     alpha2 = np.rad2deg(np.arctan2(sin_alpha, -np.sin(U1)*np.sin(sigma)
                                    + np.cos(U1)*np.cos(sigma)*np.cos(alpha1)))
 
-    # Normalizando o azimute para 0..360:
+    # Normalizing the azimuth to 0..360:
     if alpha2 < 0:
         alpha2 = alpha2 + 360
 
